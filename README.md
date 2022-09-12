@@ -1,21 +1,16 @@
 # Collie
 
-**TODO: Add description**
+A LISP dialect transpiled to Erlang.
 
-## Installation
+## Setup
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `collie` to your list of dependencies in `mix.exs`:
+- You need to have `asdf` installed.
+- Run `asdf install`.
 
-```elixir
-def deps do
-  [
-    {:collie, "~> 0.1.0"}
-  ]
-end
-```
+## REPL
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/collie>.
+In order to use REPL run `mix run repl.exs`
 
+## Compiling and running files
+
+In order to write a program in Collie and compile it to BEAM machine code you need to place your code in `input.cll` and run `compile_and_run.sh`. The output will be saved as transpiled code in `output.erl` as well as BEAM code in `output.beam`.
