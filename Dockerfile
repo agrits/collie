@@ -8,10 +8,12 @@ RUN mix local.hex --force
 RUN mix local.rebar --force  
 
 ENV PATH="${PATH}:/app"
+ENV MIX_ENV="prod"
 
 COPY ./lib ./lib
 COPY ./deps ./deps
 COPY ./test ./test
+COPY ./config ./config
 COPY ./.credo.exs ./.credo.exs
 COPY ./coveralls.json ./coveralls.json
 COPY ./Makefile ./Makefile

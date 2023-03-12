@@ -2,7 +2,7 @@ defmodule Collie.Compiler do
   @moduledoc """
   Responsible for compiling Collie source code to BEAM code.
   """
-  alias Collie.{Reader, Parser, Transpiler, Writer, Lexer}
+  alias Collie.{Bootstrap, Reader, Parser, Transpiler, Writer, Lexer}
 
   @typedoc """
   Name of input file, e.g. "input.cll"
@@ -31,6 +31,8 @@ defmodule Collie.Compiler do
   end
 
   def compile(input_filename, output_filename) do
+    Bootstrap.elixir_libs()
+
     with {:ok, content} <- Reader.read_file(input_filename),
          {:ok, forms} <- Lexer.read_str(content),
          {:ok, erlang_ast} <- Parser.parse_forms(forms),

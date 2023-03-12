@@ -3,7 +3,8 @@
       "src",
       "lib/collie/new.ex",
       "lib/collie/cli.ex",
-      "lib/collie/repl.ex"
+      "lib/collie/repl.ex",
+      "lib/collie/bootstrap.ex"
     ]
   }
   
