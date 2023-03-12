@@ -3,41 +3,31 @@ defmodule Collie.Repl do
   REPL for Collie language
   """
 
-  alias Collie.{Parser, Printer, Reader, Transpiler}
-  defp read(s), do: Reader.read_str(s)
+  alias Collie.{Parser, Lexer, Evaluator, Reader, Printer}
 
-  defp eval([form], env \\ []) do
-    form
-    |> Parser.parse()
-    |> then(&[&1])
-    |> :erl_eval.exprs(env)
-    |> case do
-      {:value, val, new_env} -> {val, new_env}
+  @doc """
+  REPL loop. Continuously gets user's input, evaluates it and prints.
+  """
+  @spec loop(env :: list()) :: no_return
+  def loop(env \\ [], iterations \\ :infinite) do
+    e_ =
+      try do
+        with str <- Reader.read_line(),
+             {:ok, forms} <- Lexer.read_str(str),
+             {:ok, ast} <- Parser.parse_forms(forms),
+             {val, new_env} <- Evaluator.eval(ast, env) do
+          Printer.print_val(val)
+          new_env
+        end
+      rescue
+        e ->
+          IO.puts(inspect(e))
+          env
+      end
+
+    case iterations do
+      :infinite -> loop(e_)
+      n when n > 1 -> loop(e_, iterations - 1)
     end
-  end
-
-  defp print(exp), do: inspect(exp)
-
-  def rep(str, env) do
-    try do
-      str
-      |> read
-      |> eval(env)
-      |> then(fn {v, e} ->
-        IO.puts(print(v))
-        e
-      end)
-    rescue
-      e -> IO.inspect(e)
-    end
-  catch
-    e -> "#{inspect(e)}"
-  end
-
-  def loop(env \\ []) do
-    IO.gets("user> ")
-    |> String.trim("\n")
-    |> rep(env)
-    |> loop()
   end
 end

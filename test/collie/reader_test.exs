@@ -1,34 +1,33 @@
 defmodule Collie.ReaderTest do
   use ExUnit.Case
+  import ExUnit.CaptureIO
+
   alias Collie.Reader
 
-  describe "read_str/1" do
-    test "should correctly tokenize symbols" do
-      assert [{:symbol, _, 0}, {:symbol, _, 1}] = Reader.read_str("+\nabc")
+  describe "read_file/1" do
+    setup do
+      File.mkdir_p!(tmp_path())
+      dest = "#{tmp_path()}/file.txt"
+      File.write!(dest, "hello")
+      on_exit(fn -> File.rm_rf(tmp_path()) end)
+      {:ok, dest: dest}
     end
 
-    test "should correctly tokenize numbers" do
-      assert [{:float, 1.2, 0}, {:integer, 1, 1}] = Reader.read_str("1.2\n1")
+    test "reads file contents", %{dest: dest} do
+      assert "hello" == Reader.read_file(dest)
     end
+  end
 
-    test "should correctly tokenize booleans" do
-      assert [{:boolean, false, 0}, {:boolean, true, 1}] = Reader.read_str("false\ntrue")
+  describe "read_line/0" do
+    test "reads user input and trims it" do
+      assert "hello" ==
+               capture_io([input: "hello\n\n", capture_prompt: false], fn ->
+                 IO.write(Reader.read_line())
+               end)
     end
+  end
 
-    test "should correctly tokenize collections" do
-      assert [{:vector, _, 0}, {:hashmap, _, 1}, {:list, _, 2}, {:list, _, 3}] =
-               Reader.read_str("[1 2 3]\n{2 3 4 5}\n(1 2 3)\n()")
-    end
-
-    test "should correctly tokenize combinations of types" do
-      assert [
-               {:list,
-                [
-                  {:symbol, "abc", 0},
-                  {:list, [{:symbol, "+", 0}, {:integer, 1, 0}, {:string, "abc", 0}], 0},
-                  {:vector, [{:boolean, true, 1}, {:atom, nil, 1}, {:var, :x, 1}], 1}
-                ], 0}
-             ] = Reader.read_str("(abc (+ 1 \"abc\") \n [true nil $x])")
-    end
+  defp tmp_path() do
+    Path.expand("../../tmp", __DIR__)
   end
 end

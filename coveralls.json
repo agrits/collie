@@ -1,0 +1,9 @@
+{
+    "skip_files": [
+      "src",
+      "lib/collie/new.ex",
+      "lib/collie/cli.ex",
+      "lib/collie/repl.ex"
+    ]
+  }
+  
