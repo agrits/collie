@@ -1,6 +1,23 @@
 on: push
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    strategy:
+      matrix:
+        otp: [25.0]
+        elixir: [1.13.4]
+    env:
+      MIX_ENV: test
+    steps:
+      - uses: actions/checkout@v1.0.0
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+      - run: mix deps.get
+      - run: mix format
   test:
     runs-on: ubuntu-latest
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
@@ -17,5 +34,23 @@ jobs:
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
-      - run: mix deps.get
+      - run: export PATH=$PATH:$(pwd)
+      - run: make init
       - run: mix coveralls.github
+  credo:
+    runs-on: ubuntu-latest
+    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    strategy:
+      matrix:
+        otp: [25.0]
+        elixir: [1.13.4]
+    env:
+      MIX_ENV: test
+    steps:
+      - uses: actions/checkout@v1.0.0
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+      - run: mix deps.get
+      - run: mix credo
