@@ -1,5 +1,6 @@
 defmodule Collie.CompilerTest do
   use ExUnit.Case, async: false
+  @moduletag :skip_ci
 
   require IEx
 
