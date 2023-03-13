@@ -4,7 +4,11 @@
       "lib/collie/new.ex",
       "lib/collie/cli.ex",
       "lib/collie/repl.ex",
+      "lib/collie/compiler.ex",
       "lib/collie/bootstrap.ex"
-    ]
+    ],
+    "coverage_options": {
+        "minimum_coverage": 95
+    }
   }
   
