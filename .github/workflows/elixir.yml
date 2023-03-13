@@ -17,7 +17,7 @@ jobs:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
       - run: mix deps.get
-      - run: mix format
+      - run: mix format --check-formatted
   test:
     runs-on: ubuntu-latest
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
@@ -35,8 +35,11 @@ jobs:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
       - run: export PATH=$PATH:$(pwd)
-      - run: make init
-      - run: mix coveralls.github
+      - run: |
+          export PATH=$PATH:$(pwd)
+          echo $(pwd)
+          make init
+          mix coveralls.github
   credo:
     runs-on: ubuntu-latest
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
