@@ -38,7 +38,7 @@ defmodule Collie.Compiler do
          {:ok, erlang_ast} <- Parser.parse_forms(forms),
          {:ok, erlang_code} <- Transpiler.transpile(erlang_ast),
          {:ok, _} <- Writer.write(erlang_code, output_filename),
-         :ok <- compile_transpiled() |> IO.inspect() do
+         :ok <- compile_transpiled() do
       {:ok, output_filename <> ".beam"}
     end
   end

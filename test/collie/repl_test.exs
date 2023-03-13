@@ -1,5 +1,5 @@
 defmodule Collie.ReplTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   import ExUnit.CaptureIO
 
   test "shows prompt" do

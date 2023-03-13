@@ -14,7 +14,7 @@ defmodule Collie.ReaderTest do
     end
 
     test "reads file contents", %{dest: dest} do
-      assert "hello" == Reader.read_file(dest)
+      assert {:ok, "hello"} == Reader.read_file(dest)
     end
   end
 

@@ -2,6 +2,7 @@ defmodule Collie.Parser do
   @moduledoc """
   Responsible for Parsing Collie AST to Erlang AST
   """
+  alias Collie.Rest
 
   @operations ~w(+ - * / == > < <= =< /= rem div or and not xor band bor bxor bnot)
 
@@ -10,7 +11,12 @@ defmodule Collie.Parser do
   """
   @spec parse_forms(forms :: list()) :: {:ok, erlang_ast :: list()}
   def parse_forms(forms) when is_list(forms) do
-    {:ok, forms |> Enum.map(&parse/1)}
+    result =
+      forms
+      |> Enum.map(&parse/1)
+      |> Enum.flat_map(&List.wrap/1)
+
+    {:ok, result}
   end
 
   defp parse({:list, [{:erlang_remote, lib, f, line_number} | args], _}) do
@@ -64,6 +70,27 @@ defmodule Collie.Parser do
       |> Enum.map(&clause/1)
 
     function(line_number, name, length(args), clauses_mapped)
+  end
+
+  defp parse(
+         {:list,
+          [
+            {:symbol, "rest_app", _},
+            {:symbol, name, _},
+            {:integer, port, _},
+            {:hashmap, routes, _} | before_start
+          ], _line_number}
+       ) do
+    {:ok, forms} = parse_forms(Rest.app(name, port, routes, before_start))
+    forms
+  end
+
+  defp parse(
+         {:list, [{:symbol, "handler", _}, {:symbol, name, _}, {:hashmap, method_handlers, _}],
+          _line_number}
+       ) do
+    {:ok, forms} = parse_forms(Rest.handler(name, method_handlers))
+    forms
   end
 
   defp parse({:list, [{:symbol, "module", _}, {:symbol, name, _}], line_number}) do
