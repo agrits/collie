@@ -1,0 +1,20 @@
+
+(handler todos_handler {
+    GET get_todo
+    DELETE delete_todo
+})
+
+(defn get_todo ($req) (
+    (= $id (from_url $req :id))
+    (= $c (db_utils:db_connection))
+    (= [:ok $item] (eredis:q $c ("LINDEX" "items" $id)))
+    [:ok (reply_json $req {:todo $item} 200)]
+))
+
+(defn delete_todo ($req) (
+    (= $c (db_utils:db_connection))
+    (= $id (from_url $req :id))
+    (= [:ok $item] (eredis:q $c ("LINDEX" "items" $id)))
+    (= [:ok $count] (eredis:q $c ("LREM" "items" "1" $item)))
+    [:ok (reply_json $req {:count $count} 200)]
+))

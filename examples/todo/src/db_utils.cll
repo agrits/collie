@@ -1,0 +1,10 @@
+(module db_utils)
+
+(export ([register_redis 0] [db_connection 0]))
+
+(defn register_redis () (
+    (= [:ok, $c] (eredis:start_link "127.0.0.1" 6379))
+    (= true (erlang:register :redis $c))
+))
+
+(defn db_connection () ((erlang:whereis :redis)))

@@ -2,8 +2,6 @@ defmodule Collie.CompilerTest do
   use ExUnit.Case, async: false
   @moduletag :skip_ci
 
-  require IEx
-
   alias Collie.Compiler
 
   describe "compile/2" do
@@ -29,6 +27,16 @@ defmodule Collie.CompilerTest do
 
       assert {:ok, beam_filename} = Compiler.compile(dest)
       assert hd(String.split(dest, ".")) <> ".beam" == beam_filename
+    end
+
+    test "raises on fail", %{dest: dest} do
+      code = """
+      (module hello
+      """
+
+      File.write!(dest, code)
+
+      assert_raise RuntimeError, fn -> Compiler.compile(dest) end
     end
   end
 

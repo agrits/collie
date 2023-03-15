@@ -5,3 +5,6 @@ if config_env() == "prod" do
 else
   config :collie, elixir_ebin: "~/.asdf/installs/elixir/1.13.4-otp-25/lib/elixir/ebin/Elixir"
 end
+
+config :collie, jsone: "1.7.0"
+config :collie, cowboy: "2.9.0"

@@ -1,0 +1,19 @@
+(handler todo_handler {
+    GET get_todos
+    POST add_todo
+})
+
+(defn add_todo ($req)
+    (
+        (= [$_ $item] (from_body $req <<"item">>))
+        (= $c (db_utils:db_connection))
+        (= [:ok, $l] (eredis:q $c ("RPUSH" "items" $item)))
+        [:ok, (reply_json $req {:count $l} {:index 201})]
+    )
+)
+
+(defn get_todos ($req) (
+    (= $c (db_utils:db_connection))
+    (= [:ok $items] (eredis:q $c ("LRANGE" "items" "0" "-1")))
+    [:ok (reply_json $req {:todos $items} 200)]
+))

@@ -16,6 +16,10 @@ defmodule Collie.ReaderTest do
     test "reads file contents", %{dest: dest} do
       assert {:ok, "hello"} == Reader.read_file(dest)
     end
+
+    test "fails when no such file" do
+      assert {:error, :enoent} == Reader.read_file("non_existing_file")
+    end
   end
 
   describe "read_line/0" do

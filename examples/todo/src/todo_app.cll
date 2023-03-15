@@ -1,0 +1,7 @@
+
+(rest_app todo_app 8080 {
+    "/todo" :todo_handler 
+    "/todo/:id" :todos_handler
+} 
+db_utils:register_redis
+)
